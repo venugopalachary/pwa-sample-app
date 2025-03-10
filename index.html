@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rotomaker Digital Calendar</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(() => console.log("Service Worker Registered"))
+                .catch(error => console.log("Service Worker Failed: ", error));
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to My PWA</h1>
+        <p>This is a simple Progressive Web App example.</p>
+    </div>
+
+    <script>
+        let deferredPrompt;
+
+        // Store the beforeinstallprompt event
+        window.addEventListener('beforeinstallprompt', (event) => {
+            event.preventDefault();
+            deferredPrompt = event;
+        });
+
+        // Show Swal alert after 2 seconds of user presence
+        setTimeout(() => {
+            Swal.fire({
+                title: "Install App?",
+                text: "Install this app for a better experience.",
+                icon: "info",
+                showCancelButton: true,
+                confirmButtonText: "Install",
+                cancelButtonText: "Close"
+            }).then((result) => {
+                if (result.isConfirmed && deferredPrompt) {
+                    deferredPrompt.prompt();
+                    deferredPrompt.userChoice.then(choiceResult => {
+                        if (choiceResult.outcome === 'accepted') {
+                            console.log('User accepted PWA install');
+                        } else {
+                            console.log('User dismissed PWA install');
+                        }
+                        deferredPrompt = null;
+                    });
+                }
+            });
+        }, 2000); // Show alert after 2 seconds
+    </script>
+</body>
+</html>
